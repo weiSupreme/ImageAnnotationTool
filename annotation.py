@@ -58,7 +58,31 @@ def Draw(events, x, y, flags, param):
                          (0, 0, 0), 1)
             img = img2.copy()
 
-            
+def MakeConfig():
+    cf=configparser.ConfigParser()
+    cf.add_section('dir')
+    cf.set('dir','images_dir','images')
+    cf.set('dir','outputs_dir','outputs')
+    cf.set('dir','tmp_dir','tmp')
+    
+    cf.add_section('label')
+    cf.set('label','prefix','20181215')
+    cf.set('label','postfix','T3a')
+    cf.set('label','length','15')
+    
+    cf.add_section('flag')
+    cf.set('flag','move2tmp','1')
+    cf.set('flag','update_fix','1')
+    
+    cf.add_section('image')
+    cf.set('image','type','bmp')
+    
+    cf.write(open('annotation.config','w'))
+    
+     
+if not os.path.exists('annotation.config'):
+    MakeConfig()
+    
 cf=configparser.ConfigParser()
 cf.read('annotation.config')
 
@@ -91,14 +115,16 @@ imgs = os.listdir(imagesDir)
 cnt = len(imgs)
 for imgn in imgs:
     print(imagesDir+'/'+imgn, cnt)
-    print(prefix)
     cnt -= 1
+    
     cf.read('annotation.config')
     prefix=cf.get('label','prefix')
     postfix=cf.get('label','postfix')
+    print(prefix)
     lenpre=len(prefix)
     lenpost=len(postfix)
-    txt = open(outputsDir+'/' + imgn.rstrip(imgtype) + 'txt', 'w')
+    
+    txt = open(outputsDir+'/' + imgn.split('.')[0] + 'txt', 'w')
     img = cv.imread(imagesDir+'/' + imgn)
     img1 = img.copy()
     while (1):

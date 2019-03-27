@@ -1,3 +1,7 @@
 images
 outputs
 tmp
+*.spec
+build
+__pycache__
+dist
