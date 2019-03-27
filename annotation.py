@@ -42,7 +42,8 @@ def Draw(events, x, y, flags, param):
         flag = True
     elif events == cv.EVENT_LBUTTONUP:
         flag = False
-        rects.append(rect)
+        rects.append(rect.copy())
+        #print(rects)
         cv.rectangle(img1, (rect[0], rect[1]), (rect[2], rect[3]),
                      (70, 70, 70), 1)
     if events == cv.EVENT_MOUSEMOVE:
@@ -124,7 +125,7 @@ for imgn in imgs:
     lenpre=len(prefix)
     lenpost=len(postfix)
     
-    txt = open(outputsDir+'/' + imgn.split('.')[0] + 'txt', 'w')
+    txt = open(outputsDir+'/' + imgn.split('.')[0] + '.txt', 'w')
     img = cv.imread(imagesDir+'/' + imgn)
     img1 = img.copy()
     while (1):
@@ -136,6 +137,7 @@ for imgn in imgs:
         if keyin & 0xFF == 27:  #esc
             sys.exit()
         if keyin & 0xFF == 13 and len(prefix) == labellen and len(rects) == labellen:
+            #print(rects)
             for i in range(labellen):
                 rect_=rects[i]
                 txt.write((prefix+postfix)[i]+' '+str(rect_[0]) + ' ' + str(rect_[1]) + ' ' + str(rect_[2]) + ' ' +str(rect_[3]) + '\n')
