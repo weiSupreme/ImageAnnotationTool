@@ -104,9 +104,7 @@ if not os.path.exists(imagesDir):
     cf.set('dir','imagesDir',images_dir)
     cf.write(open('annotation.config','w'))
 if not os.path.exists(outputsDir):
-    outputsDir=input('Please enter the outputs directory: ')
-    cf.set('dir','outputsDir',outputs_dir)
-    cf.write(open('annotation.config','w'))
+    os.mkdir('outputs')
 if not os.path.exists(tmpDir):
     os.mkdir('tmp')
     
@@ -136,9 +134,9 @@ for imgn in imgs:
          #   print(keyin)
         if keyin & 0xFF == 27:  #esc
             sys.exit()
-        if keyin & 0xFF == 13 and len(prefix) == labellen and len(rects) == labellen:
+        if keyin & 0xFF == 13 and len(prefix) == len(rects):
             #print(rects)
-            for i in range(labellen):
+            for i in range(len(rects)):
                 rect_=rects[i]
                 txt.write((prefix+postfix)[i]+' '+str(rect_[0]) + ' ' + str(rect_[1]) + ' ' + str(rect_[2]) + ' ' +str(rect_[3]) + '\n')
             txt.close()
@@ -147,11 +145,11 @@ for imgn in imgs:
             print('ok: '+prefix)
             rects=[]
             break
-        if keyin & 0xFF == 13 and (len(prefix) != labellen or len(rects) != labellen):  # Enter
+        if keyin & 0xFF == 13 and len(prefix) != len(rects):  # Enter
             txt.close()
             count = 0
             break
-        if keyin & 0xFF >= 48 and keyin & 0xFF <= 120 and len(prefix)<labellen:
+        if keyin & 0xFF >= 48 and keyin & 0xFF <= 120:
             prefix += chr(keyin)
             if len(prefix)==lenpre and isUpdateFix!=0:
                 cf.set('label','prefix',prefix)
@@ -160,16 +158,18 @@ for imgn in imgs:
                 postfix=prefix[labellen-lenpost:]
                 cf.set('label','postfix',postfix)
                 cf.write(open('annotation.config','w'))
+            print(prefix+'\n')
             cv.putText(img, prefix, (50, 50), cv.FONT_HERSHEY_COMPLEX, 1,
                        (0, 0, 0), 2)
-        if len(prefix+postfix) == labellen:
-            prefix += postfix
-            cv.putText(img, prefix, (50, 50), cv.FONT_HERSHEY_COMPLEX, 1,
-                       (0, 0, 0), 2)
+        #if len(prefix+postfix) == labellen:
+         #   prefix += postfix
+          #  cv.putText(img, prefix, (50, 50), cv.FONT_HERSHEY_COMPLEX, 1,
+           #            (0, 0, 0), 2)
         if keyin & 0xFF == 8:
             prefix = prefix[:-1]
             img5=img1.copy()
             cv.putText(img5, postfix + prefix, (80, 80), cv.FONT_HERSHEY_COMPLEX, 1,
                        (0, 0, 0), 2)
             img=img5
+            print(prefix+'\n')
 cv.destroyAllWindows()
